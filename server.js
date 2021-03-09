@@ -19,16 +19,10 @@ const todoSchema = new mongoose.Schema({
 
 const Todo = mongoose.model("Todo", todoSchema);
 
-
-const corsOptions = {
-  origin: "http://localhost:3000",
-  optionsSuccessStatus: 200, 
-};
-
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors());
 
-app.get("/todos", async (req, res) => {
+app.get("/api/todos", async (req, res) => {
   const todos = await Todo.find({}).exec();
   const { q } = req.query;
   if (q) {
@@ -38,20 +32,20 @@ app.get("/todos", async (req, res) => {
   }
 });
 
-app.get("/todos/:todoId", async (req, res) => {
+app.get("/api/todos/:todoId", async (req, res) => {
   const { todoId } = req.params;
   const todo = await Todo.findById(todoId).exec();
   res.send(todo ?? {});
 });
 
-app.post("/todos", async (req, res) => {
+app.post("/api/todos", async (req, res) => {
   const { title } = req.body;
   const todo = await new Todo({ title, completed: false }).save();
   console.log('POST!', todo);
   res.send(todo);
 });
 
-app.put("/todos/:todoId", async (req, res) => {
+app.put("/api/todos/:todoId", async (req, res) => {
   const { todoId } = req.params;
   const { title } = req.body;
 
@@ -60,7 +54,7 @@ app.put("/todos/:todoId", async (req, res) => {
   res.send("OK!");
 });
 
-app.delete("/todos/:todoId", async (req, res) => {
+app.delete("/api/todos/:todoId", async (req, res) => {
   const { todoId } = req.params;
   await Todo.deleteOne({ _id: todoId }).exec();
 
@@ -77,8 +71,11 @@ app.get("*", (req, res) => {
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
+
+const PORT = process.env.PORT || 5000;
+
 db.once("open", function () {
-  app.listen(8000, () => {
+  app.listen(PORT, () => {
     console.log("Example app listening on port 8000!");
   });
 });
