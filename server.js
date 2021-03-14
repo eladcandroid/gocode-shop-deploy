@@ -5,7 +5,9 @@ const path = require("path");
 
 const app = express();
 
-mongoose.connect("mongodb+srv://gocode:12345@cluster0.own0i.mongodb.net/gocode?retryWrites=true&w=majority", {
+require('dotenv').config();
+
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -76,6 +78,6 @@ const PORT = process.env.PORT || 5000;
 
 db.once("open", function () {
   app.listen(PORT, () => {
-    console.log("Example app listening on port 8000!");
+    console.log(`Example app listening on port ${PORT}!`);
   });
 });
